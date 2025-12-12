@@ -3,7 +3,7 @@ import ConfirmModal from '../components/ConfirmModal'
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
-export default function TaskList({ token, user, onEdit, onView }) {
+export default function TaskList({ token, onEdit, onView }) {
   const [tasks, setTasks] = useState([])
   const [page, setPage] = useState(1)
   const [limit] = useState(9)
@@ -48,16 +48,7 @@ export default function TaskList({ token, user, onEdit, onView }) {
     fetchTasks()
   }
 
-  const confirmDelete = (task) => {
-    const assignedUserId = task.assignedTo ? task.assignedTo._id : null;
-    const createdById = task.createdBy ? task.createdBy._id : null;
-
-    if (assignedUserId === user._id && createdById !== user._id) {
-      alert("You cannot delete this task. It was assigned to you by another user.");
-      return;
-    }
-    setDeletingId(task._id);
-  }
+  const confirmDelete = (id) => setDeletingId(id)
 
   const doDelete = async () => {
     if (!deletingId) return
@@ -72,11 +63,10 @@ export default function TaskList({ token, user, onEdit, onView }) {
   const cancelDelete = () => setDeletingId(null)
 
   const getPriorityStyles = (priority) => {
-    if (priority === 'high') return 'bg-[#FFF0F0] border-[#E05353] text-[#E05353]'
-    if (priority === 'medium') return 'bg-[#FFF8E5] border-[#E8C14C] text-[#B89A3A]'
-    return 'bg-[#E5FFF0] border-[#76C893] text-[#5A9E6F]'
+    if (priority === 'high') return 'bg-[#E05353]/10 text-[#E05353] border border-[#E05353]/20'
+    if (priority === 'medium') return 'bg-[#E8C14C]/10 text-[#B89A3A] border border-[#E8C14C]/20'
+    return 'bg-[#76C893]/10 text-[#5A9E6F] border border-[#76C893]/20'
   }
-
 
   const getStatusStyles = (status) => {
     if (status === 'completed') return 'text-[#76C893]'
@@ -121,7 +111,7 @@ export default function TaskList({ token, user, onEdit, onView }) {
           {tasks.map(t => (
             <div
               key={t._id}
-              className={`border rounded-xl p-5 hover:shadow-md transition-shadow ${getPriorityStyles(t.priority)}`}
+              className="bg-white border border-[#E8E8E8] rounded-xl p-5 hover:shadow-md transition-shadow"
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1 min-w-0">
@@ -174,7 +164,7 @@ export default function TaskList({ token, user, onEdit, onView }) {
                   </button>
                 )}
                 <button
-                  onClick={() => confirmDelete(t)}
+                  onClick={() => confirmDelete(t._id)}
                   className="flex-1 px-3 py-2 bg-[#E05353]/10 hover:bg-[#E05353]/20 text-[#E05353] text-sm font-medium rounded-lg transition-colors"
                 >
                   Delete
