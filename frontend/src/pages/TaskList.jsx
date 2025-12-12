@@ -22,7 +22,9 @@ export default function TaskList({ token, onEdit, onView }) {
         setTasks(data.tasks)
         setTotal(data.total)
       }
-    } catch (e) { }
+    } catch (e) {
+      console.error(e)
+    }
     setLoading(false)
   }
 
@@ -50,14 +52,19 @@ export default function TaskList({ token, onEdit, onView }) {
 
   const confirmDelete = (id) => setDeletingId(id)
 
-  const doDelete = async () => {
-    if (!deletingId) return
-    await fetch(`${BASE_URL}/api/tasks/${deletingId}?confirm=true`, {
-      method: 'DELETE',
-      headers: { Authorization: 'Bearer ' + token }
-    })
-    setDeletingId(null)
-    fetchTasks()
+  const doDelete = async (id) => {
+    if (!id) return
+    try {
+      await fetch(`${BASE_URL}/api/tasks/${id}?confirm=true`, {
+        method: 'DELETE',
+        headers: { Authorization: 'Bearer ' + token }
+      })
+      fetchTasks()
+    } catch (err) {
+      console.error('Failed to delete task', err)
+    } finally {
+      setDeletingId(null)
+    }
   }
 
   const cancelDelete = () => setDeletingId(null)
@@ -235,7 +242,7 @@ export default function TaskList({ token, onEdit, onView }) {
         open={!!deletingId}
         title="Delete task"
         message="Are you sure you want to delete this task? This action cannot be undone."
-        onConfirm={doDelete}
+        onConfirm={() => doDelete(deletingId)}
         onCancel={cancelDelete}
       />
     </div>
