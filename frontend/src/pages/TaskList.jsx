@@ -62,12 +62,6 @@ export default function TaskList({ token, onEdit, onView }) {
 
   const cancelDelete = () => setDeletingId(null)
 
-  const getPriorityStyles = (priority) => {
-    if (priority === 'high') return 'bg-[#E05353]/10 text-[#E05353] border border-[#E05353]/20'
-    if (priority === 'medium') return 'bg-[#E8C14C]/10 text-[#B89A3A] border border-[#E8C14C]/20'
-    return 'bg-[#76C893]/10 text-[#5A9E6F] border border-[#76C893]/20'
-  }
-
   const getStatusStyles = (status) => {
     if (status === 'completed') return 'text-[#76C893]'
     if (status === 'in-progress') return 'text-[#5A67D8]'
@@ -111,7 +105,13 @@ export default function TaskList({ token, onEdit, onView }) {
           {tasks.map(t => (
             <div
               key={t._id}
-              className="bg-white border border-[#E8E8E8] rounded-xl p-5 hover:shadow-md transition-shadow"
+              className={`rounded-xl p-5 hover:shadow-md transition-shadow border ${
+                t.priority === 'high'
+                  ? 'bg-[#FDEAEA] border-[#F5B5B5]'
+                  : t.priority === 'medium'
+                  ? 'bg-[#FFF8E1] border-[#E8C14C]'
+                  : 'bg-[#E8F6EF] border-[#76C893]'
+              }`}
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1 min-w-0">
@@ -120,7 +120,13 @@ export default function TaskList({ token, onEdit, onView }) {
                     {t.assignedTo ? t.assignedTo.name : 'Unassigned'}
                   </p>
                 </div>
-                <span className={`px-2.5 py-1 rounded-md text-xs font-medium ml-3 ${getPriorityStyles(t.priority)}`}>
+                <span className={`px-2.5 py-1 rounded-md text-xs font-medium ml-3 ${
+                  t.priority === 'high'
+                    ? 'text-[#E05353]'
+                    : t.priority === 'medium'
+                    ? 'text-[#B89A3A]'
+                    : 'text-[#5A9E6F]'
+                }`}>
                   {t.priority.charAt(0).toUpperCase() + t.priority.slice(1)}
                 </span>
               </div>
